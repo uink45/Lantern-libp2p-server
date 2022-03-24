@@ -1,1 +1,1 @@
-web: sh -c 'npm run start && cd /app/heroku_output && ./Server'
+web: sh -c 'dotnet run && npm run start'
