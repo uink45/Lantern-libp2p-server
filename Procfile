@@ -1,1 +1,1 @@
-web: npm run start && dotnet run
+web: npm run start && cd /app/heroku_output && ./Server
