@@ -4,6 +4,25 @@ const {toHexString} = require("@chainsafe/ssz");
 const {ssz} = require("@chainsafe/lodestar-types");
 const { getApi } = require("./network/api/impl/api");
 const { RestApi } = require("./network/api/rest");
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const app = express();
+const PORT = 9000;
+
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+})
+
+
+app.listen(PORT, () => { 
+  console.log(`Facts Events service listening at http://localhost:${PORT}`)
+})
+
+launch();
+
+
+
 
 async function launch(){
     const { options, beaconConfig, libp2p, logger, signal } = await createModules();
@@ -14,10 +33,9 @@ async function launch(){
         metrics: null,
         signal,
     })
-    /*
+
     const api = getApi(options.api, {
         config: beaconConfig,
-        currentState: state,
         network,
     });
     const restApi = new RestApi(options.api.rest, {
@@ -26,12 +44,9 @@ async function launch(){
         api,
     });
     await restApi.listen();
-    */
     await network.start();  
     print(network, logger);
 }
-
-launch();
 
 
 async function print(network, logger){
@@ -53,14 +68,14 @@ async function print(network, logger){
             count: 1, 
             step: 1
         }
-        const finalizedBlock = await requestBlocks(network, connectedPeers, finalizedBlockRequest, logger); 
-        const currentBlock = await requestBlocks(network,connectedPeers, currentBlockRequest, logger); 
+        const finalizedBlock = await requestBlocks(network, connectedPeers, finalizedBlockRequest); 
+        const currentBlock = await requestBlocks(network,connectedPeers, currentBlockRequest); 
         storeBlocks(network, finalizedBlock, currentBlock);
     }
     setTimeout(print, 12000, network, logger);
 }
 
-async function requestBlocks(network, connectedPeers, body, logger){
+async function requestBlocks(network, connectedPeers, body){
     var response;
     var isValid = false;
 
@@ -69,7 +84,7 @@ async function requestBlocks(network, connectedPeers, body, logger){
             response = await network.reqResp.beaconBlocksByRange(connectedPeers[random(0, connectedPeers.length - 1)], body);  
         }
         catch(error){
-            requestBlocks(network, connectedPeers, body, logger);
+            requestBlocks(network, connectedPeers, body);
         }        
         if(response != undefined && response[0] != undefined){
             isValid = true;

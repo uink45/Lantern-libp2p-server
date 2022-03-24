@@ -13,6 +13,9 @@
   "dependencies": {
     "@chainsafe/lodestar": "^0.34.2",
     "@chainsafe/lodestar-cli": "^0.34.2",
-    "datastore-core": "^7.0.1"
+    "body-parser": "^1.19.2",
+    "cors": "^2.8.5",
+    "datastore-core": "^7.0.1",
+    "express": "^4.17.3"
   }
 }
