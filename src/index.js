@@ -5,14 +5,39 @@ const {ssz} = require("@chainsafe/lodestar-types");
 const { getApi } = require("./network/api/impl/api");
 const { RestApi } = require("./network/api/rest");
 const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
 const app = express();
-const PORT = process.env.PORT || 6000;
+const PORT = process.env.PORT || 8080;
+var network;
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
+
+app.get('/', async (req, res) => {
+    res.set('Libp2p server running!');
 })
+
+app.get('/status', async (req, res) => {
+    var connectedPeers = null;
+    var block = null;
+    if(network != null || network != undefined){
+        connectedPeers = await network.getConnectedPeers().length;
+    }
+    if(network.peerManager.blocks.storedBlocks != null || network.peerManager.blocks.storedBlocks != undefined){
+        block = {
+            slot: network.peerManager.blocks.storedBlocks.message.slot,
+            blockRoot: toHexString(ssz.phase0.BeaconBlockHeader.createTreeBackedFromStruct(network.peerManager.blocks.storedBlocks.message).hashTreeRoot()),            
+            parentRoot: toHexString(network.peerManager.blocks.storedBlocks.message.parentRoot),
+            stateRoot: toHexString(network.peerManager.blocks.storedBlocks.message.stateRoot),
+            syncAggregate: {
+                syncCommitteeBits: toHexString(ssz.altair.SyncCommitteeBits.createTreeBackedFromStruct((network.peerManager.blocks.storedBlocks.message.body.syncAggregate.syncCommitteeBits)).serialize()),
+                syncCommitteeSignature: toHexString(network.peerManager.blocks.storedBlocks.message.body.syncAggregate.syncCommitteeSignature),
+            }
+        }
+    }
+    res.json({
+        peerCount: connectedPeers,
+        latestBlock: block
+    })
+})
+
 
 
 app.listen(PORT, () => { 
@@ -22,11 +47,9 @@ app.listen(PORT, () => {
 launch();
 
 
-
-
 async function launch(){
     const { options, beaconConfig, libp2p, logger, signal } = await createModules();
-    const network = await new Network(options.network, {
+    network = await new Network(options.network, {
         config: beaconConfig,
         libp2p,
         logger: logger.child(options.logger.network),
@@ -101,6 +124,7 @@ async function requestBlocks(network, connectedPeers, body){
 function storeBlocks(network, finalizedBlock, currentBlock){
     if(finalizedBlock != null & currentBlock != null){
         network.peerManager.blocks.updateStatusBlock(finalizedBlock[0], currentBlock[0]);
+        network.peerManager.blocks.storedBlocks = currentBlock[0];
         printResponse(currentBlock);    
     } 
 }

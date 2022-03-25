@@ -6,7 +6,7 @@ class Blocks{
         this.clock = clock;
         this.config = config;
         this.statusBlock = this.createFirstStatusBlock();      
-        this.storedBlocks = [];
+        this.storedBlocks;
     }
     
     getHeadState(){

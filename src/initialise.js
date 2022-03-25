@@ -8,8 +8,6 @@ const { fromHexString } = require("@chainsafe/ssz");
 const { parseEnrArgs } = require("@chainsafe/lodestar-cli/lib/options");
 const { createIBeaconConfig } = require("@chainsafe/lodestar-config");
 const { AbortController } = require("@chainsafe/abort-controller");
-const { LevelDbController } = require("@chainsafe/lodestar-db");
-const { BeaconDb } = require("@chainsafe/lodestar");
 const { createNodeJsLibp2p } = require("./network");
 const { args } = require("./args");
 
