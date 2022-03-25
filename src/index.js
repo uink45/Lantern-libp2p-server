@@ -26,7 +26,7 @@ app.get('/status', async (req, res) => {
     if(network != null || network != undefined){
         connectedPeers = await network.getConnectedPeers().length;
     }
-    if(network.peerManager.blocks.storedBlocks != null || network.peerManager.blocks.storedBlocks != undefined){
+    if(network != undefined && (network.peerManager.blocks.storedBlocks != null || network.peerManager.blocks.storedBlocks != undefined)){
         block = {
             slot: network.peerManager.blocks.storedBlocks.message.slot,
             blockRoot: toHexString(ssz.phase0.BeaconBlockHeader.createTreeBackedFromStruct(network.peerManager.blocks.storedBlocks.message).hashTreeRoot()),            
