@@ -120,7 +120,7 @@ function storeBlocks(network, finalizedBlock, currentBlock){
     if(finalizedBlock != null & currentBlock != null){
         network.peerManager.blocks.updateStatusBlock(finalizedBlock[0], currentBlock[0]);
         network.peerManager.blocks.storedBlocks = currentBlock[0];
-        printResponse(currentBlock);    
+        //printResponse(currentBlock);    
     } 
 }
 
