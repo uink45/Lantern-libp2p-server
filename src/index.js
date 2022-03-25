@@ -5,9 +5,13 @@ const {ssz} = require("@chainsafe/lodestar-types");
 const { getApi } = require("./network/api/impl/api");
 const { RestApi } = require("./network/api/rest");
 const express = require('express');
+const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 5000;
 var network;
+
+const buildPath = path.join(__dirname, '..', 'build');
+app.use(express.static(buildPath));
 
 
 app.get('/', async (req, res) => {
@@ -41,7 +45,7 @@ app.get('/status', async (req, res) => {
 
 
 app.listen(PORT, () => { 
-  console.log(`Facts Events service listening at http://localhost:${PORT}`)
+  console.log(`Running at http://localhost:${PORT}`)
 })
 
 launch();
@@ -56,17 +60,6 @@ async function launch(){
         metrics: null,
         signal,
     })
-
-    const api = getApi(options.api, {
-        config: beaconConfig,
-        network,
-    });
-    const restApi = new RestApi(options.api.rest, {
-        config: beaconConfig,
-        logger: logger.child(options.logger.api),
-        api,
-    });
-    await restApi.listen();
     await network.start();  
     print(network, logger);
 }
