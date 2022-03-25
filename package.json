@@ -7,8 +7,7 @@
     "build": "npm install",
     "server": "node src/index",
     "start": "npm run server",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",

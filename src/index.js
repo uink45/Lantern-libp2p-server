@@ -7,12 +7,14 @@ const { RestApi } = require("./network/api/rest");
 const express = require('express');
 const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 var network;
 
-const buildPath = path.join(__dirname, '..', 'build');
-app.use(express.static(buildPath));
+app.use(express.static(path.join(__dirname, 'build')));
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 app.get('/', async (req, res) => {
     res.set('Libp2p server running!');
